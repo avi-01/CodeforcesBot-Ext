@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import axios from "axios";
-import { Explorer } from "../Container/explorer";
+import axios from "../../../axios/axios";
+import { Explorer } from "../../../Container/explorer";
 
 export function getPastContests(limit: number): Thenable<Explorer[]> {
   const URL = "https://codeforces.com/api/contest.list";
@@ -25,7 +25,8 @@ export function getPastContests(limit: number): Thenable<Explorer[]> {
       return new Explorer(
         contest.name,
         vscode.TreeItemCollapsibleState.Collapsed,
-        contest.id
+        contest.id,
+        "Past"
       );
     });
 

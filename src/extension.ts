@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-import { CodeforcesProvider } from './contests';
+import { ContestsProvider } from './Component/Contests/contests';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -12,10 +12,15 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "codeforcesbot-ext" is now active!');
 
+
 	vscode.window.registerTreeDataProvider(
-		'codeforces',
-		new CodeforcesProvider(vscode.workspace.rootPath ? vscode.workspace.rootPath : "/")
-	  );
+		'contests',
+		new ContestsProvider(vscode.workspace.rootPath ? vscode.workspace.rootPath : "/")
+	);
+
+	vscode.commands.registerCommand('contests.refresh', () =>
+		vscode.window.showInformationMessage("Hello Friends")
+  	);
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand

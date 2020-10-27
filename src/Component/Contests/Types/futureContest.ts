@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import axios from "axios";
-import { Explorer } from "../Container/explorer";
+import axios from "../../../axios/axios";
+import { Explorer } from "../../../Container/explorer";
 
 export function getFutureContests(limit: number): Thenable<Explorer[]> {
   const URL = "https://codeforces.com/api/contest.list";
@@ -22,10 +22,16 @@ export function getFutureContests(limit: number): Thenable<Explorer[]> {
     console.log(limitedFutureContests);
 
     const futureContestsExplorer = limitedFutureContests.map((contest: any) => {
+
+      const contestDate = new Date(contest.startTimeSeconds * 1000);
+      let contestDetail = `${contest.name} : \n${contestDate.toString()}`;
       return new Explorer(
         contest.name,
-        vscode.TreeItemCollapsibleState.Collapsed,
-        contest.id
+        vscode.TreeItemCollapsibleState.None,
+        contest.id,
+        "Future",
+        contestDetail
+        
       );
     });
 

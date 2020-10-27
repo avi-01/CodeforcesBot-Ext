@@ -18,7 +18,7 @@
 			"activitybar": [
 				{
 					"id": "codeforces-explorer",
-					"title": "Codeforces Explorer",
+					"title": "Codeforces",
 					"icon": "res/img/mainIcon.svg"
 				}
 			]
@@ -39,10 +39,31 @@
 				}
 			]
 		},
+		"menus": {
+			"view/title": [
+				{
+					"command": "contests.refresh",
+					"when": "view == contests",
+					"group": "navigation",
+					"icon": {
+						"light": "res/img/light/refresh.svg",
+						"dark": "res/img/dark/refresh.svg"
+					}
+				}
+			]
+		},
 		"commands": [
 			{
 				"command": "codeforcesbot-ext.helloWorld",
 				"title": "Hello World"
+			},
+			{
+				"command": "contests.refresh",
+				"title": "Refresh",
+				"icon": {
+					"light": "res/img/light/refresh.svg",
+					"dark": "res/img/dark/refresh.svg"
+				}
 			}
 		]
 	},
@@ -68,6 +89,9 @@
 		"vscode-test": "^1.4.0"
 	},
 	"dependencies": {
-		"axios": "^0.21.0"
+		"@types/cheerio": "^0.22.22",
+		"axios": "^0.21.0",
+		"cheerio": "^1.0.0-rc.3",
+		"query-string": "^6.13.6"
 	}
 }

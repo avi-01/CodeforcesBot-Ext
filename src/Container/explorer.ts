@@ -7,13 +7,18 @@ export class Explorer extends vscode.TreeItem {
     public readonly label: string,
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
     public readonly explorerId?: number,
-    public readonly description = ""
+    public readonly type = "",
+    public readonly tooltip?: string,
+    public readonly data?: any
   ) {
     super(label, collapsibleState);
-    this.tooltip = `${this.label}`;
-    this.description = `${this.description}`;
+
+    // console.log(tooltip)
+    this.tooltip = tooltip ? tooltip : `${this.label}`;
 
     this.explorerId = explorerId;
+    this.type = type;
+    this.data = data;
   }
 
   // iconPath = {
