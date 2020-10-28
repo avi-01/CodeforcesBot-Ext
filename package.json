@@ -2,9 +2,11 @@
 	"name": "codeforcesbot-ext",
 	"displayName": "Codeforces Bot",
 	"description": "Codeforces automation. Fetch, test and submit problems.",
+	"publisher": "avi-01",
+	"repository": "git@github.com:avi-01/CodeforcesBot-Ext.git",
 	"version": "0.0.1",
 	"engines": {
-		"vscode": "^1.49.0"
+		"vscode": "^1.50.0"
 	},
 	"categories": [
 		"Other"
