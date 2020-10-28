@@ -1,16 +1,17 @@
 import * as vscode from 'vscode';
-const fs = require("fs");
-const path = require("path");
+import { updateLoginStatus } from '../../Component/LoginStatus/loginStatus';
+import { getData, getUserHandle, updateData, getUserPassword} from '../data/data';
+
 const axios = require("axios");
 const cheerio = require("cheerio");
 const qs = require("querystring");
 
 const baseUrl = "https://codeforces.com";
-const dataFile = path.join(__filename, "..", "..", "..", "res", "Data", "data.json");
+
 
 const user = {
-  handleOrEmail: "testBot",
-  password: "testbot@123",
+  handleOrEmail: getUserHandle(),
+  password: getUserPassword(),
 };
 
 let session = {
@@ -19,9 +20,9 @@ let session = {
 };
 
 async function login() {
-  let data = JSON.parse(readFile(dataFile));
+  let data: any = getData();
 
-  if (!data || !data.cookie || !data.lastUpdate || Date.now() - data.lastUpdate > 3600000) {
+  if (!data || !data.cookie || data.cookie === '' || !data.lastUpdate || Date.now() - data.lastUpdate > 3600000) {
     return getCsrfAndJid()
       .then(() => {
         return requestLogin();
@@ -30,11 +31,10 @@ async function login() {
         data.cookie = session.cookie;
         data.lastUpdate = Date.now();
         console.log("Time: "+data.lastUpdate);
-        createFile(dataFile,JSON.stringify(data));
+        updateData(data);
 
         return data.cookie;
       });
-
   }
   else {
     return data.cookie;
@@ -51,7 +51,7 @@ function getCsrfAndJid() {
       const $ = cheerio.load(res.data);
       session.csrfToken = $("meta[name='X-Csrf-Token']")[0].attribs["content"];
 
-      // console.log(session)
+      console.log(session);
     })
     .catch((err: any) => {
       handleError(err);
@@ -84,6 +84,14 @@ function requestLogin() {
 
       session.csrfToken = $("meta[name='X-Csrf-Token']")[0].attribs["content"];
 
+      if(userId === 'Enter') {
+        updateLoginStatus(false,user.handleOrEmail);
+        session.cookie = '';
+        vscode.window.showInformationMessage("Failed to login user: " + user.handleOrEmail);
+        return;
+      }
+
+      updateLoginStatus(true,user.handleOrEmail);
       console.log(`Login Successful. Welcome ${userId}!!!`);
     })
     .catch((err: any) => {
@@ -91,25 +99,10 @@ function requestLogin() {
     });
 }
 
-function readFile(file: string) {
-  checkExist(file, fs.existsSync(file));
-  return fs.readFileSync(file);
-}
-
-function createFile(fileName: string, data: any) {
-  fs.writeFile(fileName, data, (err: any) => err ? handleError(err) : null);
-}
-
-function checkExist(obj: string, exist: boolean) {
-  if (!exist) {
-    handleError(obj + " does not Exist");
-  }
-}
-
 function handleError(error: any) {
   console.log(error);
-  console.log("Failed to login!!!!!!!!!!");
-  throw new Error("Failed to login!!!!!!!");
+  console.log("Failed to login user: "+user.handleOrEmail);
+  throw new Error("Failed to login user: "+user.handleOrEmail);
 }
 
 export default login;

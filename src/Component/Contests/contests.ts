@@ -6,12 +6,20 @@ import {Explorer} from '../../Container/explorer';
 import { getPastContests } from './Types/pastContest';
 import { getFutureContests } from './Types/futureContest';
 import { getRunningContests } from './Types/runningContest';
-import getProblems from './Problems/problems';
+import Problems from './Problems/problems';
+import FileHandler from '../../helper/fileHandler/fileHandler';
+import { getUserHandle } from '../../helper/data/data';
+
+const resDir = path.join(__filename, "..", "..", "..", "..", "res");
+const dataFile = path.join(resDir, "Data", "data.json");
 
 export class ContestsProvider implements vscode.TreeDataProvider<Explorer> {
-  
+
+  userHandle;
+
   constructor(private workspaceRoot: string) {
     console.log(workspaceRoot);
+    this.userHandle = getUserHandle();
   }
 
   getTreeItem(element: Explorer): vscode.TreeItem {
@@ -41,9 +49,12 @@ export class ContestsProvider implements vscode.TreeDataProvider<Explorer> {
     }
 
     else if(element.label === 'Problems') {
-      const contestId = element.explorerId;
+      const contestId = element.explorerId ? element.explorerId : 0;
 
-      return getProblems(contestId);
+      const problems = new Problems(this.userHandle, contestId);
+      return problems.fetchProblems().then(() => {
+        return problems.toExplorer();
+      });
     }
 
     else {
@@ -54,9 +65,9 @@ export class ContestsProvider implements vscode.TreeDataProvider<Explorer> {
   getContestTypeExplorer(): Thenable<Explorer[]> {
     let contestExplorers = [];
 
-    contestExplorers.push(new Explorer("Running", vscode.TreeItemCollapsibleState.Expanded));
-    contestExplorers.push(new Explorer("Future", vscode.TreeItemCollapsibleState.Collapsed));
-    contestExplorers.push(new Explorer("Past", vscode.TreeItemCollapsibleState.Collapsed));
+    contestExplorers.push(new Explorer("Running", "ContestType", vscode.TreeItemCollapsibleState.Expanded));
+    contestExplorers.push(new Explorer("Future", "ContestType", vscode.TreeItemCollapsibleState.Collapsed));
+    contestExplorers.push(new Explorer("Past", "ContestType", vscode.TreeItemCollapsibleState.Collapsed));
 
     return Promise.resolve(
       contestExplorers
@@ -66,8 +77,8 @@ export class ContestsProvider implements vscode.TreeDataProvider<Explorer> {
   getContestExplorer(contestId: number | undefined): Thenable<Explorer[]> {
     let contestExplorers = [];
 
-    contestExplorers.push(new Explorer("Standing", vscode.TreeItemCollapsibleState.Collapsed, contestId));
-    contestExplorers.push(new Explorer("Problems", vscode.TreeItemCollapsibleState.Expanded, contestId));
+    contestExplorers.push(new Explorer("Standing", "Standing", vscode.TreeItemCollapsibleState.Collapsed, contestId));
+    contestExplorers.push(new Explorer("Problems", "Problems", vscode.TreeItemCollapsibleState.Expanded, contestId));
 
     return Promise.resolve(
       contestExplorers
@@ -77,9 +88,11 @@ export class ContestsProvider implements vscode.TreeDataProvider<Explorer> {
   private _onDidChangeTreeData: vscode.EventEmitter<Explorer | undefined> = new vscode.EventEmitter<Explorer | undefined>();
   readonly onDidChangeTreeData: vscode.Event<Explorer | undefined> = this._onDidChangeTreeData.event;
 
-  refresh(): void {
-		// this._onDidChangeTreeData.fire();
-	}
+  public refresh(): void {
+    console.log("Event");
+    console.log(this.onDidChangeTreeData);
+		this._onDidChangeTreeData.fire(undefined);
+  }
 
 }
 

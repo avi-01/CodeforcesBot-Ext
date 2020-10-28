@@ -5,12 +5,12 @@ import login from "../Login/login";
 const instance = axios.create({ baseURL: "https://codeforces.com" });
 
 instance.interceptors.request.use((config: AxiosRequestConfig) => {
-  console.log(config);
+  // console.log(config);
 
 
   return login()
     .then((cookie) => {
-      console.log(cookie)
+      // console.log(cookie)
       config.headers.Cookie =  cookie;
       return config;
     })

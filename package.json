@@ -44,11 +44,14 @@
 				{
 					"command": "contests.refresh",
 					"when": "view == contests",
-					"group": "navigation",
-					"icon": {
-						"light": "res/img/light/refresh.svg",
-						"dark": "res/img/dark/refresh.svg"
-					}
+					"group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "contests.refresh",
+					"when": "view == contests && viewItem == Problem",
+					"group": "inline"
 				}
 			]
 		},
@@ -68,6 +71,7 @@
 		]
 	},
 	"scripts": {
+		"self-test": "tsc ./src/testing.ts; node ./src/testing.js",
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
 		"lint": "eslint src --ext ts",

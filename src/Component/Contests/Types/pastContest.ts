@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import axios from "../../../axios/axios";
+import axios from "../../../helper/axios/axios";
 import { Explorer } from "../../../Container/explorer";
 
 export function getPastContests(limit: number): Thenable<Explorer[]> {
@@ -22,11 +22,17 @@ export function getPastContests(limit: number): Thenable<Explorer[]> {
     console.log(limitedPastContests);
 
     const pastContestsExplorer = limitedPastContests.map((contest: any) => {
+
+      const contestDate = new Date(contest.startTimeSeconds * 1000);
+      let contestDetail = `${contest.name} : \n${contestDate.toString()}`;
+
       return new Explorer(
         contest.name,
+        "PastContest",
         vscode.TreeItemCollapsibleState.Collapsed,
         contest.id,
-        "Past"
+        "Past",
+        contestDetail
       );
     });
 

@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import axios from "../../../axios/axios";
+import axios from "../../../helper/axios/axios";
 import { Explorer } from "../../../Container/explorer";
 
 export function getFutureContests(limit: number): Thenable<Explorer[]> {
@@ -27,6 +27,7 @@ export function getFutureContests(limit: number): Thenable<Explorer[]> {
       let contestDetail = `${contest.name} : \n${contestDate.toString()}`;
       return new Explorer(
         contest.name,
+        "FutureContest",
         vscode.TreeItemCollapsibleState.None,
         contest.id,
         "Future",
