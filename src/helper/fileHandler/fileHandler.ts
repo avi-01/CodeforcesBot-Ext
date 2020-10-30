@@ -1,19 +1,32 @@
 const fs = require("fs");
-
 class FileHandler {
-  static readFile(file: string) {
-    this.checkExist(file, fs.existsSync(file));
-    return fs.readFileSync(file);
+  static readFile(path: string, encoding: string | null = "ascii") {
+    if(!this.checkExist(path)) {
+      return null;
+    }
+    return fs.readFileSync(path, {encoding: encoding});
+  }
+
+  static createDir(path: string, recursive: boolean = true) {
+    if (!fs.existsSync(path)) {
+      fs.mkdirSync(path, {recursive: recursive});
+    }
   }
 
   static createFile(fileName: string, data: any) {
     fs.writeFile(fileName, data, (err: any) => (err ? this.handleError(err) : null));
   }
 
-  static checkExist(obj: string, exist: boolean) {
-    if (!exist) {
-      this.handleError(obj + " does not Exist");
+  static copyFile(fromCopy: string, toCopy:string) {
+    fs.copyFile(fromCopy, toCopy, (err:any) => this.handleError(err));
+  }
+
+  static checkExist(path: string): boolean {
+    if (!fs.existsSync(path)) {
+      return false;
     }
+
+    return true;
   }
   
   static handleError(error: any) {

@@ -9,11 +9,6 @@ const qs = require("querystring");
 const baseUrl = "https://codeforces.com";
 
 
-const user = {
-  handleOrEmail: getUserHandle(),
-  password: getUserPassword(),
-};
-
 let session = {
   csrfToken: "",
   cookie: "",
@@ -21,6 +16,14 @@ let session = {
 
 async function login() {
   let data: any = getData();
+
+
+  const userHandle = getUserHandle();
+
+  if(userHandle === null || userHandle === undefined || userHandle === '') {
+    handleError("Failed to login user: "+userHandle);
+    return '';
+  }
 
   if (!data || !data.cookie || data.cookie === '' || !data.lastUpdate || Date.now() - data.lastUpdate > 3600000) {
     return getCsrfAndJid()
@@ -63,6 +66,11 @@ function requestLogin() {
 
   const url = baseUrl + "/enter";
 
+  const user = {
+    handleOrEmail: getUserHandle(),
+    password: getUserPassword(),
+  };
+
   const options = {
     headers: {
       "content-type": "application/x-www-form-urlencoded",
@@ -85,14 +93,13 @@ function requestLogin() {
       session.csrfToken = $("meta[name='X-Csrf-Token']")[0].attribs["content"];
 
       if(userId === 'Enter') {
-        updateLoginStatus(false,user.handleOrEmail);
         session.cookie = '';
-        vscode.window.showInformationMessage("Failed to login user: " + user.handleOrEmail);
+        handleError("Failed to login user: "+user.handleOrEmail);
         return;
       }
 
       updateLoginStatus(true,user.handleOrEmail);
-      console.log(`Login Successful. Welcome ${userId}!!!`);
+      vscode.window.showInformationMessage(`Login Successful. Welcome ${userId}!!!`);
     })
     .catch((err: any) => {
       handleError(err);
@@ -100,9 +107,9 @@ function requestLogin() {
 }
 
 function handleError(error: any) {
-  console.log(error);
-  console.log("Failed to login user: "+user.handleOrEmail);
-  throw new Error("Failed to login user: "+user.handleOrEmail);
+  console.error(error);
+  const userHandle = getUserHandle();
+  updateLoginStatus(false,userHandle);
 }
 
 export default login;

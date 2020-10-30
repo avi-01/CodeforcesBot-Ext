@@ -1,25 +1,25 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
-import * as path from 'path';
 
 import {Explorer} from '../../Container/explorer';
 import { getPastContests } from './Types/pastContest';
 import { getFutureContests } from './Types/futureContest';
 import { getRunningContests } from './Types/runningContest';
 import Problems from './Problems/problems';
-import FileHandler from '../../helper/fileHandler/fileHandler';
 import { getUserHandle } from '../../helper/data/data';
-
-const resDir = path.join(__filename, "..", "..", "..", "..", "res");
-const dataFile = path.join(resDir, "Data", "data.json");
+import { getContests } from './allContest';
 
 export class ContestsProvider implements vscode.TreeDataProvider<Explorer> {
 
-  userHandle;
+  private rootPath;
 
   constructor(private workspaceRoot: string) {
     console.log(workspaceRoot);
-    this.userHandle = getUserHandle();
+    this.rootPath = workspaceRoot;
+
+    const file = vscode.workspace.findFiles("Codeforces/1437*/A/A.cpp").then((file) => {
+      console.log(file);
+    });
+
   }
 
   getTreeItem(element: Explorer): vscode.TreeItem {
@@ -33,15 +33,15 @@ export class ContestsProvider implements vscode.TreeDataProvider<Explorer> {
     }
 
     else if(element.label === 'Past') { 
-      return getPastContests(10);
-    }
-
-    else if(element.label === 'Future') { 
-      return getFutureContests(20);
+      return getContests(element.label,10,vscode.TreeItemCollapsibleState.Collapsed);
     }
 
     else if(element.label === 'Running') { 
-      return getRunningContests(20);
+      return getContests(element.label,20,vscode.TreeItemCollapsibleState.Collapsed);
+    }
+
+    else if(element.label === 'Future') { 
+      return getContests(element.label,20,vscode.TreeItemCollapsibleState.None);
     }
 
     else if(element.type === 'Past' || element.type === 'Running') {
@@ -51,7 +51,7 @@ export class ContestsProvider implements vscode.TreeDataProvider<Explorer> {
     else if(element.label === 'Problems') {
       const contestId = element.explorerId ? element.explorerId : 0;
 
-      const problems = new Problems(this.userHandle, contestId);
+      const problems = new Problems(getUserHandle(), contestId);
       return problems.fetchProblems().then(() => {
         return problems.toExplorer();
       });
