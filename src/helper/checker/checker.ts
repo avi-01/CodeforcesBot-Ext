@@ -23,18 +23,18 @@ export function checker(contestCodeIn: number, problemIdIn: string) {
         return 0;
     }
 
-    const solRegexPath = join("Codeforces",`${contestCode}*`,`${problemId}*`,`${problemId}*.cpp`);
+    const solRegexPath = FileHandler.solPath(contestCode, problemId);
 
-    return vscode.workspace.findFiles(solRegexPath)
-    .then((files) => {
-        if(files.length === 0) {
+    return FileHandler.findFile(solRegexPath)
+    .then((file) => {
+        if(file === null) {
             vscode.window.showErrorMessage("Problem Solution File not found");
             return false;
         }  
     
         vscode.window.showInformationMessage(`${contestCode}/${problemId}: Checking Solution...`);
     
-        solPath = files[0].fsPath;
+        solPath = file;
         problemFolder = join(solPath, "..");
         console.log("FileFound: "+solPath);
     
@@ -67,7 +67,7 @@ function compileProgram() {
         if(clicked === "See Error") {
             const checkerOut = join(problemFolder,"checkerOut.txt");
             FileHandler.createFile(checkerOut, error);
-            vscode.window.showTextDocument(vscode.Uri.file(checkerOut), { preview: true });
+            FileHandler.openFile(checkerOut);
         }
     });
     return false;
@@ -193,7 +193,7 @@ function outputTestCases(testCases: any) {
 
   FileHandler.createFile(checkerOut, outputData);
 
-  vscode.window.showTextDocument(vscode.Uri.file(checkerOut), { preview: true });
+  FileHandler.openFile(checkerOut);
 }
 
 function execShell(cmd: string) {

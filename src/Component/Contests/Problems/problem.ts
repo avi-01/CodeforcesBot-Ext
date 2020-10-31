@@ -93,7 +93,7 @@ class Problem {
 
     // console.log(this.id,this.name,label);
 
-    return new Explorer(
+    const problemExplorer = new Explorer(
       label,
       "Problem",
       vscode.TreeItemCollapsibleState.None,
@@ -102,8 +102,16 @@ class Problem {
       this.name,
       this,
       lightIconPath,
-      darkIconPath
+      darkIconPath,
+      {
+        command: 'contest.openSol',
+        title: '',
+        arguments: [this]
+      }
     );
+
+
+    return problemExplorer;
   }
 }
 

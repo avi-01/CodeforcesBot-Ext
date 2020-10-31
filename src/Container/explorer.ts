@@ -10,7 +10,8 @@ export class Explorer extends vscode.TreeItem {
     public readonly tooltip?: string,
     public readonly data?: any,
     public readonly lightIconPath?: string,
-    public readonly darkIconPath?: string
+    public readonly darkIconPath?: string,
+    public readonly command?: vscode.Command
   ) {
     super(label, collapsibleState);
     this.contextValue = contextValue;
@@ -28,5 +29,8 @@ export class Explorer extends vscode.TreeItem {
         dark: darkIconPath,
       };
     }
+
+
+    this.command = command;
   }
 }

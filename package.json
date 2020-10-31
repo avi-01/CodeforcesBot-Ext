@@ -74,6 +74,10 @@
 				{
 					"command": "contest.checkerSol",
 					"when": "false"
+				},
+				{
+					"command": "contest.openSol",
+					"when": "false"
 				}
 			]
 		},
@@ -88,7 +92,7 @@
 			},
 			{
 				"command": "contest.createContestFolders",
-				"title": "Create Contest Folders",
+				"title": "Create Contest Folder",
 				"icon": {
 					"light": "res/img/light/createFolder.svg",
 					"dark": "res/img/dark/createFolder.svg"
@@ -101,6 +105,10 @@
 					"light": "res/img/light/test.svg",
 					"dark": "res/img/dark/test.svg"
 				}
+			},
+			{
+				"command": "contest.openSol",
+				"title": "Open Solution File"
 			},
 			{
 				"command": "contests.refresh",

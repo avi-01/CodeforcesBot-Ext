@@ -1,5 +1,28 @@
 const fs = require("fs");
+const {join} = require("path");
+import * as vscode from "vscode";
+
 class FileHandler {
+  
+  static openFile(path: string, options?: any) {
+    return vscode.window.showTextDocument(vscode.Uri.file(path), options);
+  }
+
+  static findFile(path: string) {
+    return vscode.workspace.findFiles(path).then((files) => {
+      if(files.length === 0) {
+        return null;
+      }  
+      else {
+        return files[0].fsPath;
+      }
+    });
+  }
+
+  static solPath(contestId: number, problemId: string): string {
+    return join("Codeforces",`${contestId}*`,`${problemId}*`,`${problemId}*.cpp`);
+  }
+
   static readFile(path: string, encoding: string | null = "ascii") {
     if(!this.checkExist(path)) {
       return null;

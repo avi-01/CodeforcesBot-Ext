@@ -8,6 +8,8 @@ import { setStatusBarItem } from "./Component/LoginStatus/loginStatus";
 import { resetCookie, setConfiguration, setUser } from "./helper/data/data";
 import { createContestFolders } from "./helper/createContestFolder/createContestFolder";
 import { checker } from "./helper/checker/checker";
+import FileHandler from "./helper/fileHandler/fileHandler";
+import Problem from "./Component/Contests/Problems/problem";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -43,6 +45,19 @@ export function activate(context: vscode.ExtensionContext) {
     console.log("REFRESH.....");
     console.log(node);
     contestProvider.refresh();
+  });
+
+  vscode.commands.registerCommand("contest.openSol", (node: Problem) => {
+    console.log("Opening File.....");
+    const solRegexPath = FileHandler.solPath(node.contestId, node.id);
+    FileHandler.findFile(solRegexPath).then((file) => {
+      if(file === null) {
+        vscode.window.showErrorMessage("File not found!!! Run create contest folder");
+        return;
+      }
+
+      FileHandler.openFile(file, {preview: false});
+    });
   });
 
   vscode.commands.registerCommand(

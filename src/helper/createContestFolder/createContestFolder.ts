@@ -152,9 +152,8 @@ function openProblemSolFile(id: any, name: any) {
   const problemSolFile = join(dir, `${id}_${name}`, `${id}_${name}.cpp`);
   const row = getTemplateLineNo() ? getTemplateLineNo() : 0;
 
-  return window
-    .showTextDocument(Uri.file(problemSolFile), { preview: false })
-    .then(async (editor: TextEditor) => {
+  return FileHandler.openFile(problemSolFile, {preview: false})
+    .then((editor: TextEditor) => {
       const lineCount = editor.document.lineCount;
       const cursorAtLine = lineCount >= row ? row - 1 : lineCount - 1;
       const range = editor.document.lineAt(cursorAtLine).range;
