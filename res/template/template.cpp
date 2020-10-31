@@ -1,12 +1,5 @@
-/*
-    * @authr AVINISH KUMAR
-    * @college BIT MESRA
-*/
- 
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp> 
 using namespace std;
-using namespace __gnu_pbds;
  
 #define MOD 1000000007
 #define maxn 100000000000017    
@@ -22,11 +15,6 @@ using namespace __gnu_pbds;
  
 typedef long long ll;
 typedef long double ld;
- 
- 
-typedef tree<ll, null_type, less<ll>, rb_tree_tag,
-             tree_order_statistics_node_update>
-    ordered_set;
  
  
 #define o(...) if(local=='L') {__f(#__VA_ARGS__, __VA_ARGS__); cout<<endl;}

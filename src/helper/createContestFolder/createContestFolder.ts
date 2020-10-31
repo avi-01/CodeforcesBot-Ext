@@ -3,12 +3,10 @@ import {
   getTemplateFile,
   getTemplateLineNo,
   getUserHandle,
-  setTemplateLineNo,
 } from "../data/data";
 import FileHandler from "../fileHandler/fileHandler";
 import axios from "../axios/axios";
 import Problems from "../../Component/Contests/Problems/problems";
-import Problem from "../../Component/Contests/Problems/problem";
 
 const cheerio = require("cheerio");
 const { join } = require("path");
@@ -38,7 +36,7 @@ export function createContestFolders(
     return;
   }
 
-  dir = rootPath.uri.path + "/Codeforces/" + name;
+  dir = join(rootPath.uri.fsPath ,"Codeforces", name);
 
   console.log("Dir: " + dir);
 
@@ -49,7 +47,7 @@ export function createContestFolders(
 }
 
 async function createReqFiles() {
-  await FileHandler.createDir(join(__dirname, "..", "Codeforces"));
+  // await FileHandler.createDir(join(__dirname, "..", "Codeforces"));
   await FileHandler.createDir(dir);
 }
 
@@ -109,7 +107,7 @@ function getProblemTestCase(problem: any) {
 }
 
 async function storeTestCases(problem: any, testCases: any) {
-  const problemLabel = `${problem.id}: ${problem.name}`;
+  const problemLabel = `${problem.id}_${problem.name}`;
   const problemDir = join(dir, problemLabel);
 
   let templateFile = getTemplateFile();
@@ -151,7 +149,7 @@ async function openProblemsFiles(problemsId: any) {
 }
 
 function openProblemSolFile(id: any, name: any) {
-  const problemSolFile = join(dir, `${id}: ${name}`, `${id}: ${name}.cpp`);
+  const problemSolFile = join(dir, `${id}_${name}`, `${id}_${name}.cpp`);
   const row = getTemplateLineNo() ? getTemplateLineNo() : 0;
 
   return window

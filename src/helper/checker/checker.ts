@@ -32,9 +32,9 @@ export function checker(contestCodeIn: number, problemIdIn: string) {
             return false;
         }  
     
-        vscode.window.showInformationMessage("Checking Solution...");
+        vscode.window.showInformationMessage(`${contestCode}/${problemId}: Checking Solution...`);
     
-        solPath = files[0].path;
+        solPath = files[0].fsPath;
         problemFolder = join(solPath, "..");
         console.log("FileFound: "+solPath);
     

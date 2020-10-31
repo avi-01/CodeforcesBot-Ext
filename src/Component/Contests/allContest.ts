@@ -32,7 +32,7 @@ export function getContests(type: string, limit: number, expandable: vscode.Tree
       let contestDetail = `${contest.name} : \n${contestDate.toString()}`;
 
       return new Explorer(
-        `${contest.id}: ${contest.name}`,
+        `${contest.id}_${contest.name}`,
         `${type}Contest`,
         expandable,
         contest.id,

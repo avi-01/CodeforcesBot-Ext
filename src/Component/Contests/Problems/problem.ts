@@ -71,7 +71,7 @@ class Problem {
     let lightIconPath = null;
     let darkIconPath = null;
 
-    let label = `${this.id}: ${this.name}`;
+    let label = `${this.id}_${this.name}`;
 
     if (this.points !== 0 || this.practiceAc) {
       lightIconPath = path.join(resPath, "img", "light", "ac.svg");
@@ -80,14 +80,14 @@ class Problem {
       if (this.points !== 0) {
         const waCount =
           this.rejectedAttemptCount === 0 ? " " : this.rejectedAttemptCount;
-        label = `${this.id}: ${this.name} | +${waCount}`;
+        label = `${this.id}_${this.name} | +${waCount}`;
       }
     } else if (this.rejectedAttemptCount !== 0 || this.practiceRejects !== 0) {
       lightIconPath = path.join(resPath, "img", "light", "wa.svg");
       darkIconPath = path.join(resPath, "img", "dark", "wa.svg");
 
       if (this.rejectedAttemptCount !== 0) {
-        label = `${this.id}: ${this.name} | -${this.rejectedAttemptCount}`;
+        label = `${this.id}_${this.name} | -${this.rejectedAttemptCount}`;
       }
     }
 
