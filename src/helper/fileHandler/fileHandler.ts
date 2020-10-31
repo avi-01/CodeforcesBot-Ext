@@ -1,6 +1,7 @@
 const fs = require("fs");
-const {join} = require("path");
+const {join, sep} = require("path");
 import * as vscode from "vscode";
+
 
 class FileHandler {
   
@@ -17,6 +18,26 @@ class FileHandler {
         return files[0].fsPath;
       }
     });
+  }
+
+  static getProblemDetail(path: string) {
+    const paths = path.split(sep);
+    const size = paths.length;
+    const regexPath = "^.*Codeforces,.*_.*,.*_.*,.*_.*\.cpp$";
+    if(!paths.join(",").match(regexPath)) {
+      return null;
+    }
+    const id = paths[size - 1].split("_")[0];
+    const contestId = Number(paths[size - 3].split("_")[0]);
+
+    const isNumber = isNaN(contestId);
+
+    if(contestId && id && !isNaN(contestId)) {
+      return {contestId:contestId, id: id};
+    }
+
+    return null;
+
   }
 
   static solPath(contestId: number, problemId: string): string {

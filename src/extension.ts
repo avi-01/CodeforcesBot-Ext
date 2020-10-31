@@ -11,6 +11,7 @@ import { createContestFolders } from "./helper/createContestFolder/createContest
 import { checker } from "./helper/checker/checker";
 import FileHandler from "./helper/fileHandler/fileHandler";
 import Problem from "./Component/Contests/Problems/problem";
+import { getContests } from "./Component/Contests/allContest";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -18,6 +19,8 @@ export function activate(context: vscode.ExtensionContext) {
   console.log(
     'Congratulations, your extension "codeforcesbot-ext" is now active!'
   );
+
+  FileHandler.getProblemDetail("/mnt/9A84BA6F84BA4E0F/Projects/C++/Codeforces/asad_Educational Codeforces Round 97 (Rated for Div. 2)/A_Marketing Scheme/A_Marketing Scheme.cpp");
 
   setUser(
     context.globalState.get("userHandle"),
@@ -69,7 +72,7 @@ export function activate(context: vscode.ExtensionContext) {
       console.log("Explorer.....");
       console.log(node);
       vscode.window.showInformationMessage("Creating contest folder...");
-      if (node.explorerId) {
+      if (node && node.explorerId) {
         createContestFolders(node.explorerId, node.label);
       }
     }
@@ -77,12 +80,22 @@ export function activate(context: vscode.ExtensionContext) {
 
   vscode.commands.registerCommand(
     "contest.checkerSol",
-    async (node: Explorer) => {
+    async (node: any) => {
       console.log("Checker.....");
       console.log(node);
-      if (node.data.contestId && node.data.id) {
+      if (node && node.data && node.data.contestId && node.data.id) {
         const checkerResult = await checker(node.data.contestId, node.data.id);
         console.log(checkerResult);
+      }
+      else {
+        const problemDetail = FileHandler.getProblemDetail(node.fsPath);
+        if(problemDetail && problemDetail.contestId && problemDetail.id) {
+          const checkerResult = await checker(problemDetail.contestId, problemDetail.id);
+          console.log(checkerResult);
+        }
+        else {
+          vscode.window.showErrorMessage(node.fsPath+": \nFile does not belong to codeforces contest");
+        }
       }
     }
   );

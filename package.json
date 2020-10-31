@@ -4,7 +4,7 @@
 	"description": "Codeforces automation. Fetch, test and submit problems.",
 	"publisher": "avi01",
 	"repository": "git@github.com:avi-01/CodeforcesBot-Ext.git",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"engines": {
 		"vscode": "^1.40.0"
 	},
@@ -66,6 +66,13 @@
 					"group": "inline"
 				}
 			],
+			"editor/title": [
+				{
+				  "when": "resourceScheme == file && resourceExtname == .cpp &&  resource =~ '/.*Codeforces.*_.*_.*_.*cpp/'",
+				  "command": "contest.checkerSol",
+				  "group": "navigation"
+				}
+			  ],
 			"commandPalette": [
 				{
 					"command": "contest.createContestFolders",
