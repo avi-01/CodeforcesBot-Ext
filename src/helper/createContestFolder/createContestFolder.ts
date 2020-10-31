@@ -124,7 +124,7 @@ async function storeTestCases(problem: any, testCases: any) {
   FileHandler.createDir(join(problemDir, "codeOutput"));
 
   if (!FileHandler.checkExist(join(problemDir, problemLabel + ".cpp"))) {
-    await FileHandler.copyFile(
+    FileHandler.copyFile(
       templateFile,
       join(problemDir, problemLabel + ".cpp")
     );

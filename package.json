@@ -59,11 +59,20 @@
 					"command": "contest.createContestFolders",
 					"when": "view == contests && viewItem == RunningContest",
 					"group": "inline"
+				},
+				{
+					"command": "contest.checkerSol",
+					"when": "view == contests && viewItem == Problem",
+					"group": "inline"
 				}
 			],
 			"commandPalette": [
 				{
 					"command": "contest.createContestFolders",
+					"when": "false"
+				},
+				{
+					"command": "contest.checkerSol",
 					"when": "false"
 				}
 			]
@@ -86,6 +95,14 @@
 				}
 			},
 			{
+				"command": "contest.checkerSol",
+				"title": "Run solution on sample testcases",
+				"icon": {
+					"light": "res/img/light/test.svg",
+					"dark": "res/img/dark/test.svg"
+				}
+			},
+			{
 				"command": "contests.refresh",
 				"title": "Refresh",
 				"icon": {
@@ -97,23 +114,23 @@
 		"configuration": {
 			"title": "Codeforces Bot",
 			"properties": {
-			  "codeforcesBot.compile.command": {
-				"type": "string",
-				"default": "g++-8 --std=c++14",
-				"description": "The command to compile the solution file",
-				"scope": "window"
-			  },
-			  "codeforcesBot.template.templateFile": {
-				"type": "string",
-				"description": "The template for the solution file",
-				"scope": "window"
-			  },
-			  "codeforcesBot.template.templateLineNumber": {
-				"type": "number",
-				"default": 175,
-				"description": "The line number of template from where you want to start coding",
-				"scope": "window"
-			  }
+				"codeforcesBot.compile.command": {
+					"type": "string",
+					"default": "g++-8 --std=c++14",
+					"description": "The command to compile the solution file",
+					"scope": "window"
+				},
+				"codeforcesBot.template.templateFile": {
+					"type": "string",
+					"description": "The template for the solution file",
+					"scope": "window"
+				},
+				"codeforcesBot.template.templateLineNumber": {
+					"type": "number",
+					"default": 174,
+					"description": "The line number of template from where you want to start coding",
+					"scope": "window"
+				}
 			}
 		}
 	},
@@ -141,9 +158,12 @@
 	},
 	"dependencies": {
 		"@types/cheerio": "^0.22.22",
+		"@types/shelljs": "^0.8.8",
+		"@types/table": "^6.0.0",
 		"axios": "^0.21.0",
 		"cheerio": "^1.0.0-rc.3",
 		"query-string": "^6.13.6",
-		"shelljs": "^0.8.4"
+		"shelljs": "^0.8.4",
+		"table": "^6.0.3"
 	}
 }

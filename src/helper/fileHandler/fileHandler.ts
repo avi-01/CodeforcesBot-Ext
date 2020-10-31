@@ -7,6 +7,13 @@ class FileHandler {
     return fs.readFileSync(path, {encoding: encoding});
   }
 
+  static readDir(path: string) {
+    if(!this.checkExist(path)) {
+      return null;
+    }
+    return fs.readdirSync(path);
+  }
+
   static createDir(path: string, recursive: boolean = true) {
     if (!fs.existsSync(path)) {
       fs.mkdirSync(path, {recursive: recursive});
@@ -14,11 +21,11 @@ class FileHandler {
   }
 
   static createFile(fileName: string, data: any) {
-    fs.writeFile(fileName, data, (err: any) => (err ? this.handleError(err) : null));
+    fs.writeFileSync(fileName, data, (err: any) => (err ? this.handleError(err) : null));
   }
 
   static copyFile(fromCopy: string, toCopy:string) {
-    fs.copyFile(fromCopy, toCopy, (err:any) => this.handleError(err));
+    fs.copyFileSync(fromCopy, toCopy, (err:any) => this.handleError(err));
   }
 
   static checkExist(path: string): boolean {

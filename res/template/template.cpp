@@ -9,7 +9,7 @@ using namespace std;
 using namespace __gnu_pbds;
  
 #define MOD 1000000007
-#define maxn 100000000000017
+#define maxn 100000000000017    
 #define endl "\n"
 #define mk make_pair
 #define pll pair<ll, ll>
@@ -166,9 +166,9 @@ void __f(const char* names, Arg1&& arg1, Args&&... args) {
 /////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-
 void cal() {
 }
+
 
 void solve() {
     
@@ -182,8 +182,8 @@ int main()
         local = 'L';
         time_t start, end;
         time(&start);
-        freopen("../../../input.txt", "r", stdin);
-        freopen("../../../output.txt", "w", stdout);
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
     #endif
  
     ios_base::sync_with_stdio(false);
