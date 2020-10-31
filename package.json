@@ -4,7 +4,7 @@
 	"description": "Codeforces automation. Fetch, test and submit problems.",
 	"publisher": "avi01",
 	"repository": "git@github.com:avi-01/CodeforcesBot-Ext.git",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"engines": {
 		"vscode": "^1.40.0"
 	},
