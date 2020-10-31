@@ -91,7 +91,7 @@ class Problem {
       }
     }
 
-    console.log(this.id,this.name,label);
+    // console.log(this.id,this.name,label);
 
     return new Explorer(
       label,

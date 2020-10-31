@@ -5,8 +5,9 @@ let data = {
   password: "",
   lastUpdate: 1603880554122,
   cookie: null,
-  compileCommand: "g++-8 -D L --std=c++14",
-  templateLineNo: 174,
+  compileCommand: "g++-8 --std=c++14",
+  templateFile: "",
+  templateLineNo: 0
 };
 
 export function updateData(newData: any) {
@@ -40,6 +41,15 @@ export function setUser(userHandle: string | undefined, userPassword: string | u
     data.password = userPassword ? userPassword : '';
 }
 
+export function setConfiguration(compileCommand: string, templateFile: string, templateLineNo: number) {
+    data.compileCommand = compileCommand;
+    data.templateFile = templateFile;
+    data.templateLineNo = templateLineNo;
+
+    console.log(data);
+    return;
+}
+
 
 export function getCompileCommand() {
     return data.compileCommand;
@@ -48,6 +58,15 @@ export function getCompileCommand() {
 
 export function setCompileCommand(compileCommand: string) {
     return data.compileCommand = compileCommand;
+}
+
+export function getTemplateFile() {
+    return data.templateFile;
+}
+
+
+export function setTemplateFile(templateFile: string) {
+    return data.templateFile = templateFile;
 }
 
 

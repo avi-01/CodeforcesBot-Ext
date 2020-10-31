@@ -1,9 +1,6 @@
 import * as vscode from 'vscode';
 
 import {Explorer} from '../../Container/explorer';
-import { getPastContests } from './Types/pastContest';
-import { getFutureContests } from './Types/futureContest';
-import { getRunningContests } from './Types/runningContest';
 import Problems from './Problems/problems';
 import { getUserHandle } from '../../helper/data/data';
 import { getContests } from './allContest';

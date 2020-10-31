@@ -4,7 +4,7 @@
 	"description": "Codeforces automation. Fetch, test and submit problems.",
 	"publisher": "avi01",
 	"repository": "git@github.com:avi-01/CodeforcesBot-Ext.git",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"engines": {
 		"vscode": "^1.40.0"
 	},
@@ -93,7 +93,29 @@
 					"dark": "res/img/dark/refresh.svg"
 				}
 			}
-		]
+		],
+		"configuration": {
+			"title": "Codeforces Bot",
+			"properties": {
+			  "codeforcesBot.compile.command": {
+				"type": "string",
+				"default": "g++-8 --std=c++14",
+				"description": "The command to compile the solution file",
+				"scope": "window"
+			  },
+			  "codeforcesBot.template.templateFile": {
+				"type": "string",
+				"description": "The template for the solution file",
+				"scope": "window"
+			  },
+			  "codeforcesBot.template.templateLineNumber": {
+				"type": "number",
+				"default": 175,
+				"description": "The line number of template from where you want to start coding",
+				"scope": "window"
+			  }
+			}
+		}
 	},
 	"scripts": {
 		"self-test": "tsc ./src/testing.ts; node ./src/testing.js",

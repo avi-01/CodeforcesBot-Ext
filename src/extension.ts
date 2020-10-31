@@ -5,7 +5,7 @@ import * as vscode from "vscode";
 import { ContestsProvider } from "./Component/Contests/contests";
 import { Explorer } from "./Container/explorer";
 import {setStatusBarItem} from "./Component/LoginStatus/loginStatus";
-import { resetCookie, setUser } from "./helper/data/data";
+import { resetCookie, setConfiguration, setUser } from "./helper/data/data";
 import { createContestFolders } from "./helper/createContestFolder/createContestFolder";
 
 
@@ -18,6 +18,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   setUser(context.globalState.get('userHandle'), context.globalState.get('password'));
 
+  updateConfiguration();
+
   const loginStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 1);
   setStatusBarItem(loginStatusBarItem);
 
@@ -27,23 +29,17 @@ export function activate(context: vscode.ExtensionContext) {
 
   vscode.window.registerTreeDataProvider("contests", contestProvider);
 
+  vscode.workspace.onDidChangeConfiguration(() => {
+    updateConfiguration();
+  });
+
   vscode.commands.registerCommand("contests.refresh", (node: Explorer) => {
 	  console.log("REFRESH.....");
     console.log(node);
     contestProvider.refresh();
   });
 
-  // The command has been defined in the package.json file
-  // Now provide the implementation of the command with registerCommand
-  // The commandId parameter must match the command field in package.json
-  let disposable = vscode.commands.registerCommand(
-    "codeforcesbot-ext.helloWorld",
-    () => {
-      vscode.window.showInformationMessage("Hello World from Codeforces Bot!");
-    }
-  );
-
-  disposable = vscode.commands.registerCommand("contest.createContestFolders", (node: Explorer) => {
+  vscode.commands.registerCommand("contest.createContestFolders", (node: Explorer) => {
       console.log("Explorer.....");
       console.log(node);
       vscode.window.showInformationMessage("Click create contest folder");
@@ -77,8 +73,16 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  context.subscriptions.push(disposable);
   context.subscriptions.push(loginCommand);
+}
+
+function updateConfiguration() {
+  const configuration = vscode.workspace.getConfiguration('codeforcesBot');
+  console.log("Configuration: ");
+  const compileCommand = configuration.compile.command;
+  const templateFile = configuration.template.templateFile;
+  const templateLineNo = configuration.template.templateLineNumber;
+  setConfiguration(compileCommand,templateFile,templateLineNo);
 }
 
 

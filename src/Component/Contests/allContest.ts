@@ -9,7 +9,7 @@ export function getContests(type: string, limit: number, expandable: vscode.Tree
     const allContests = res.data["result"];
 
     const typeContests = allContests.filter((contest: any) => {
-        console.log(contest);
+        // console.log(contest);
         return (type === 'Past' && contest.phase === "FINISHED") || 
         (type === 'Future' && contest.phase === "BEFORE") || 
         (type === 'Running' && contest.phase !== "BEFORE" && contest.phase !== "FINISHED" && contest.id !== 1308 && contest.id !== 1309);
@@ -24,7 +24,7 @@ export function getContests(type: string, limit: number, expandable: vscode.Tree
       )
       .slice(0, limit);
 
-    console.log(limitedContests);
+    // console.log(limitedContests);
 
     const contestsExplorer = limitedContests.map((contest: any) => {
 

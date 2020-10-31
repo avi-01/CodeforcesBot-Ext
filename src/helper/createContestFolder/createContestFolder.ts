@@ -1,5 +1,10 @@
 import { Selection, TextEditor, Uri, window, workspace } from "vscode";
-import { getTemplateLineNo, getUserHandle } from "../data/data";
+import {
+  getTemplateFile,
+  getTemplateLineNo,
+  getUserHandle,
+  setTemplateLineNo,
+} from "../data/data";
 import FileHandler from "../fileHandler/fileHandler";
 import axios from "../axios/axios";
 import Problems from "../../Component/Contests/Problems/problems";
@@ -16,28 +21,32 @@ let puppeteer: any = null;
 let contestCode = 0;
 let pdfTrue = false;
 
-let dir: string = '';
+let dir: string = "";
 
-const assetsDir = join(__filename, "..", "..", "..", "..", "res","template");
+const assetsDir = join(__filename, "..", "..", "..", "..", "res", "template");
 
-export function createContestFolders(contestId: number,name: string, pdf: boolean = false) {
-    
-    const rootPath = workspace.workspaceFolders ? workspace.workspaceFolders[0] : null;
+export function createContestFolders(
+  contestId: number,
+  name: string,
+  pdf: boolean = false
+) {
+  const rootPath = workspace.workspaceFolders
+    ? workspace.workspaceFolders[0]
+    : null;
 
-    if(!rootPath) {
-      return;
-    }
+  if (!rootPath) {
+    return;
+  }
 
-    dir = rootPath.uri.path + "/Codeforces/" + name;
+  dir = rootPath.uri.path + "/Codeforces/" + name;
 
-    console.log("Dir: "+dir);
+  console.log("Dir: " + dir);
 
-    contestCode = contestId;
-    pdfTrue = pdf;
-    createReqFiles();
-    getQuestions();
+  contestCode = contestId;
+  pdfTrue = pdf;
+  createReqFiles();
+  getQuestions();
 }
-
 
 async function createReqFiles() {
   await FileHandler.createDir(join(__dirname, "..", "Codeforces"));
@@ -57,7 +66,7 @@ async function getQuestions() {
     getTestCasesPromises.push(getProblemTestCase(problem));
   });
 
-  if (puppeteer  && (pdfTrue)) {
+  if (puppeteer && pdfTrue) {
     getProblemStatement(problemsId);
   }
 
@@ -66,13 +75,11 @@ async function getQuestions() {
   openProblemsFiles(problemsId);
 }
 
-
 function getProblemsID() {
-  
-  const problems = new Problems(getUserHandle(),contestCode);
+  const problems = new Problems(getUserHandle(), contestCode);
   return problems.fetchProblems().then(() => {
     return problems.problemsArr.map((problem) => {
-      return {id: problem.id, name: problem.name};
+      return { id: problem.id, name: problem.name };
     });
   });
 }
@@ -105,24 +112,22 @@ async function storeTestCases(problem: any, testCases: any) {
   const problemLabel = `${problem.id}: ${problem.name}`;
   const problemDir = join(dir, problemLabel);
 
+  let templateFile = getTemplateFile();
+
+  if (!templateFile || !FileHandler.checkExist(templateFile)) {
+    templateFile = join(assetsDir, "template.cpp");
+  }
+
   FileHandler.createDir(problemDir);
   FileHandler.createDir(join(problemDir, "input"));
   FileHandler.createDir(join(problemDir, "output"));
   FileHandler.createDir(join(problemDir, "codeOutput"));
 
-  if (!FileHandler.checkExist(join(problemDir, problemLabel+".cpp"))) {
-    if (!FileHandler.checkExist(join(__dirname, "template.cpp"))) {
-      await FileHandler.copyFile(
-        join(assetsDir, "template.cpp"),
-        join(problemDir, problemLabel + ".cpp")
-      );
-    }
-    else {
-      await FileHandler.copyFile(
-        join(__dirname, "template.cpp"),
-        join(problemDir, problemLabel + ".cpp")
-      );
-    }
+  if (!FileHandler.checkExist(join(problemDir, problemLabel + ".cpp"))) {
+    await FileHandler.copyFile(
+      templateFile,
+      join(problemDir, problemLabel + ".cpp")
+    );
   }
 
   testCases.forEach((testCase: any, i: number) => {
@@ -140,24 +145,26 @@ async function storeTestCases(problem: any, testCases: any) {
 }
 
 async function openProblemsFiles(problemsId: any) {
-  for(const {id, name} of problemsId) {
+  for (const { id, name } of problemsId) {
     await openProblemSolFile(id, name);
   }
-
 }
 
 function openProblemSolFile(id: any, name: any) {
   const problemSolFile = join(dir, `${id}: ${name}`, `${id}: ${name}.cpp`);
   const row = getTemplateLineNo() ? getTemplateLineNo() : 0;
 
-  return window.showTextDocument(Uri.file(problemSolFile), {preview: false}).then(async(editor: TextEditor) =>{
-    const range = editor.document.lineAt(row - 1 ).range;
-    editor.selection =  new Selection(range.end, range.end);
-    editor.revealRange(range);
-    return;
-  });
+  return window
+    .showTextDocument(Uri.file(problemSolFile), { preview: false })
+    .then(async (editor: TextEditor) => {
+      const lineCount = editor.document.lineCount;
+      const cursorAtLine = lineCount >= row ? row - 1 : lineCount - 1;
+      const range = editor.document.lineAt(cursorAtLine).range;
+      editor.selection = new Selection(range.end, range.end);
+      editor.revealRange(range);
+      return;
+    });
 }
-
 
 function getProblemStatement(problemsId: any) {
   problemsId.forEach((problem: any) => {
@@ -170,7 +177,7 @@ function getProblemStatement(problemsId: any) {
   });
 }
 
-async function printPDF(url:string, path: string, id: string) {
+async function printPDF(url: string, path: string, id: string) {
   try {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
