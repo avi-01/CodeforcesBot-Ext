@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
+import * as cp from 'child_process';
 
 import { ContestsProvider } from "./Component/Contests/contests";
 import { Explorer } from "./Container/explorer";
@@ -51,12 +52,14 @@ export function activate(context: vscode.ExtensionContext) {
     console.log("Opening File.....");
     const solRegexPath = FileHandler.solPath(node.contestId, node.id);
     FileHandler.findFile(solRegexPath).then((file) => {
-      if(file === null) {
-        vscode.window.showErrorMessage("File not found!!! Run create contest folder");
+      if (file === null) {
+        vscode.window.showErrorMessage(
+          "File not found!!! Run create contest folder"
+        );
         return;
       }
 
-      FileHandler.openFile(file, {preview: false});
+      FileHandler.openFile(file, { preview: false });
     });
   });
 

@@ -1,78 +1,109 @@
 import * as vscode from "vscode";
 import { getCompileCommand } from "../data/data";
 import FileHandler from "../fileHandler/fileHandler";
-import * as cp from 'child_process';
-import { Console } from "console";
+import * as cp from "child_process";
 
 const fs = require("fs");
-const { join } = require("path");
-const {table} = require('table');
+const { join, basename, sep } = require("path");
+const { table } = require("table");
 
 let contestCode = 0;
-let problemId = 'A';
+let problemId = "A";
+let problemLabel = "";
 let solPath = "";
 let problemFolder = "";
 
-
 export function checker(contestCodeIn: number, problemIdIn: string) {
-    contestCode = contestCodeIn;
-    problemId = problemIdIn;
+  contestCode = contestCodeIn;
+  problemId = problemIdIn;
+  problemLabel = `${contestCode}/${problemId}`;
 
-    if(!contestCode || !problemId) {
-        vscode.window.showErrorMessage("Wrong Problem for checking");
-        return 0;
+  return vscode.window.withProgress(
+    {
+      location: vscode.ProgressLocation.Notification,
+      title: `${problemLabel}: Checking Solution...`,
+    },
+    (progress, token): any => {
+      console.log("Progress...");
+      console.log(progress);
+      console.log(token);
+      return check(progress, token);
+    }
+  );
+}
+
+function check(
+  progress: vscode.Progress<any>,
+  token: vscode.CancellationToken
+) {
+  return new Promise((resolve) => {
+    if (!contestCode || !problemId) {
+      vscode.window.showErrorMessage("Wrong Problem for checking");
+      resolve(false);
+      return;
     }
 
     const solRegexPath = FileHandler.solPath(contestCode, problemId);
 
-    return FileHandler.findFile(solRegexPath)
-    .then((file) => {
-        if(file === null) {
-            vscode.window.showErrorMessage("Problem Solution File not found");
-            return false;
-        }  
-    
-        vscode.window.showInformationMessage(`${contestCode}/${problemId}: Checking Solution...`);
-    
-        solPath = file;
-        problemFolder = join(solPath, "..");
-        console.log("FileFound: "+solPath);
-    
-        return compileProgram();
-    })
-    .then((compiled) => {
-        if(!compiled) {
-            return false;
-        }
-        return getOutput();
+    return FileHandler.findFile(solRegexPath).then((file) => {
+      if (file === null) {
+        resolve(false);
+        vscode.window.showErrorMessage(
+          `${problemLabel}: Problem Solution File not found`
+        );
+        return;
+      }
+
+      solPath = file;
+      problemFolder = join(solPath, "..");
+      console.log("FileFound: " + solPath);
+
+      progress.report({ increment: 10, message: "Compiling..." });
+
+      compileProgram()
+        .then((compiled: any) => {
+          if (!compiled) {
+            resolve(false);
+            return;
+          }
+          progress.report({ increment: 50, message: "Checking Solution..." });
+          return getOutput();
+        })
+        .then((output) => {
+          if (!output) {
+            resolve(false);
+            return;
+          }
+          progress.report({ increment: 100, message: "Checking Complete." });
+          resolve(true);
+        });
     });
-    
+  });
 }
-
-
 
 function compileProgram() {
   const compileCommand = getCompileCommand();
-  const fileName = solPath;
-  const fileSave = join(problemFolder, "sol");
+  const solFile = basename(solPath);
 
-  const cmd = `${compileCommand} -o "${fileSave}" "${fileName}"`;
+  const cmd = `cd "${problemFolder}" && ${compileCommand} -o compiledSol "${solFile}"`;
 
-  return execShell(cmd).then((stdout) => {
-    console.log("Compiled Successfully");
-    return true;
-  }).catch((error: any) => {
-
-    vscode.window.showInformationMessage(`Compilation Error!!!`, "See Error").then((clicked) => {
-        if(clicked === "See Error") {
-            const checkerOut = join(problemFolder,"checkerOut.txt");
+  return execShell(cmd)
+    .then((stdout) => {
+      console.log("Compiled Successfully");
+      return true;
+    })
+    .catch((error: any) => {
+      vscode.window
+        .showErrorMessage(`${problemLabel}: Compilation Error!!!`, "See Error")
+        .then((clicked) => {
+          if (clicked === "See Error") {
+            const checkerOut = join(problemFolder, "checkerOut.txt");
             FileHandler.createFile(checkerOut, error);
             FileHandler.openFile(checkerOut);
-        }
+          }
+        });
+      return false;
     });
-    return false;
-  });
-
 }
 
 async function getOutput() {
@@ -82,9 +113,12 @@ async function getOutput() {
     const outputFolder = join(problemFolder, "output");
     const codeOutputFolder = join(problemFolder, "codeOutput");
 
-    if(!FileHandler.checkExist(inputFolder) || !FileHandler.checkExist(outputFolder)) {
-        handleError("TestCases folder missing");
-        return;
+    if (
+      !FileHandler.checkExist(inputFolder) ||
+      !FileHandler.checkExist(outputFolder)
+    ) {
+      handleError("TestCases folder missing");
+      return;
     }
 
     FileHandler.createDir(codeOutputFolder);
@@ -96,51 +130,72 @@ async function getOutput() {
     let failedCount = 0;
     let i = 0;
 
-    for(const inputNo of inputs) {
+    for (const inputNo of inputs) {
       const outputFile = join(outputFolder, outputs[i]);
       const inputFile = join(inputFolder, inputNo);
       const codeOutputFile = join(codeOutputFolder, `codeOutput${i}.txt`);
 
-      
-      const cmd = `"${fileName}" < "${inputFile}"`;
+      const solFile = `.${sep}compiledSol`;
+      const inFile = join(".",basename(inputFolder),basename(inputFile));
 
-      await execShell(cmd).then( (stdout)=> {
+      const cmd =`cd "${problemFolder}" && timeout 2s  "${solFile}" < "${inFile}"`;
 
-        console.log(stdout);
+      const runCorrectly = await execShell(cmd)
+        .then((stdout) => {
+          console.log(stdout);
 
-        const modOut = stdout.replace( /(\r\n)+/g, "\n" ).replace( /\r+/g, "\n" ).trim();
-        
-        FileHandler.createFile(codeOutputFile, modOut);
+          const modOut = stdout
+            .replace(/(\r\n)+/g, "\n")
+            .replace(/\r+/g, "\n")
+            .trim();
 
-        if (!testOutput(codeOutputFile, outputFile, i)) {
+          FileHandler.createFile(codeOutputFile, modOut);
+
+          if (!testOutput(codeOutputFile, outputFile, i)) {
             testCases.push({
-            no: i,
-            input: inputFile,
-            output: outputFile,
-            codeOutput: codeOutputFile,
-            verdict: false
+              no: i,
+              input: inputFile,
+              output: outputFile,
+              codeOutput: codeOutputFile,
+              verdict: false,
             });
             failedCount += 1;
-        }
-        else {
+          } else {
             testCases.push({
-                no: i,
-                input: inputFile,
-                output: outputFile,
-                codeOutput: codeOutputFile,
-                verdict: true
+              no: i,
+              input: inputFile,
+              output: outputFile,
+              codeOutput: codeOutputFile,
+              verdict: true,
             });
+          }
+
+          return true;
+        })
+        .catch((error: any) => {
+          console.log(error);
+          vscode.window
+            .showErrorMessage(
+              `${problemLabel}: Solution do not run for the input ${i}`,
+              "See Error"
+            )
+            .then((clicked) => {
+              if (clicked === "See Error") {
+                const checkerOut = join(problemFolder, "checkerOut.txt");
+                FileHandler.createFile(checkerOut, error);
+                FileHandler.openFile(checkerOut);
+              }
+            });
+
+          return false;
+        });
+
+        if(!runCorrectly) {
+          return false;
         }
 
-        return;
-
-      }).catch((error: any) => {
-          console.log(error);
-        handleError("Solution doest not run for the input" + i);
-      });
-        
       i++;
-    };
+    }
 
     let message = "All Sample TestCases Passed";
 
@@ -148,21 +203,25 @@ async function getOutput() {
       message = "\n" + failedCount + " Sample TestCases failed";
     }
 
-    vscode.window.showInformationMessage(message,"See Result").then((clicked) => {
-        if(clicked === "See Result") {
-            outputTestCases(testCases);
+    vscode.window
+      .showInformationMessage(`${problemLabel}: ${message}`, "See Result")
+      .then((clicked) => {
+        if (clicked === "See Result") {
+          outputTestCases(testCases);
         }
-    });
+      });
 
     return failedCount === 0;
-
-
   } catch (err) {
-      return false;
+    return false;
   }
 }
 
-function testOutput(codeOutputFile: string, outputFile: string, testNo: number) {
+function testOutput(
+  codeOutputFile: string,
+  outputFile: string,
+  testNo: number
+) {
   const codeOutput = FileHandler.readFile(codeOutputFile).toString().trim();
   const output = FileHandler.readFile(outputFile).toString().trim();
 
@@ -185,11 +244,11 @@ function outputTestCases(testCases: any) {
     const codeOutput = fs.readFileSync(testCase.codeOutput).toString();
     const verdict = testCase.verdict ? "Passed" : "Failed";
 
-    data.push([no,input, output, codeOutput, verdict]);
+    data.push([no, input, output, codeOutput, verdict]);
   });
 
   const outputData = table(data);
-  const checkerOut = join(problemFolder,"checkerOut.txt");
+  const checkerOut = join(problemFolder, "checkerOut.txt");
 
   FileHandler.createFile(checkerOut, outputData);
 
@@ -197,14 +256,14 @@ function outputTestCases(testCases: any) {
 }
 
 function execShell(cmd: string) {
-    return new Promise<string>((resolve, reject) => {
-        cp.exec(cmd, (err, out) => {
-            if (err) {
-                return reject(err);
-            }
-            return resolve(out);
-        });
+  return new Promise<string>((resolve, reject) => {
+    cp.exec(cmd, (err, out) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(out);
     });
+  });
 }
 
 function handleError(error: any) {
