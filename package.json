@@ -4,7 +4,7 @@
 	"description": "Codeforces automation. Fetch, test and submit problems.",
 	"publisher": "avi01",
 	"repository": "git@github.com:avi-01/CodeforcesBot-Ext.git",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"engines": {
 		"vscode": "^1.40.0"
 	},
@@ -34,10 +34,11 @@
 					"contextualTitle": "Contests"
 				},
 				{
-					"id": "rating",
-					"name": "Rating",
+					"id": "ratings",
+					"name": "Ratings",
 					"icon": "res/img/mainIcon.svg",
-					"contextualTitle": "Rating"
+					"contextualTitle": "Ratings",
+					"visibility": "collapsed"
 				}
 			]
 		},
@@ -46,6 +47,11 @@
 				{
 					"command": "contests.refresh",
 					"when": "view == contests",
+					"group": "navigation"
+				},
+				{
+					"command": "ratings.refresh",
+					"when": "view == ratings",
 					"group": "navigation"
 				}
 			],
@@ -64,15 +70,25 @@
 					"command": "contest.checkerSol",
 					"when": "view == contests && viewItem == Problem",
 					"group": "inline"
+				},
+				{
+					"command": "contest.submitSol",
+					"when": "view == contests && viewItem == Problem",
+					"group": "inline"
 				}
 			],
 			"editor/title": [
 				{
-				  "when": "resourceScheme == file && resourceExtname == .cpp &&  resource =~ '/.*Codeforces.*_.*_.*_.*cpp/'",
-				  "command": "contest.checkerSol",
-				  "group": "navigation"
+					"when": "resourceScheme == file && resourceExtname == .cpp &&  resource =~ '/.*Codeforces.*_.*_.*_.*cpp/'",
+					"command": "contest.checkerSol",
+					"group": "navigation"
+				},
+				{
+					"when": "resourceScheme == file && resourceExtname == .cpp &&  resource =~ '/.*Codeforces.*_.*_.*_.*cpp/'",
+					"command": "contest.submitSol",
+					"group": "navigation"
 				}
-			  ],
+			],
 			"commandPalette": [
 				{
 					"command": "contest.createContestFolders",
@@ -80,6 +96,10 @@
 				},
 				{
 					"command": "contest.checkerSol",
+					"when": "false"
+				},
+				{
+					"command": "contest.submitSol",
 					"when": "false"
 				},
 				{
@@ -114,11 +134,27 @@
 				}
 			},
 			{
+				"command": "contest.submitSol",
+				"title": "Submit the solution",
+				"icon": {
+					"light": "res/img/light/submit.svg",
+					"dark": "res/img/dark/submit.svg"
+				}
+			},
+			{
 				"command": "contest.openSol",
 				"title": "Open Solution File"
 			},
 			{
 				"command": "contests.refresh",
+				"title": "Refresh",
+				"icon": {
+					"light": "res/img/light/refresh.svg",
+					"dark": "res/img/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "ratings.refresh",
 				"title": "Refresh",
 				"icon": {
 					"light": "res/img/light/refresh.svg",
@@ -177,6 +213,8 @@
 		"@types/table": "^6.0.0",
 		"axios": "^0.21.0",
 		"cheerio": "^1.0.0-rc.3",
+		"form-data": "^3.0.0",
+		"qs": "^6.9.4",
 		"query-string": "^6.13.6",
 		"shelljs": "^0.8.4",
 		"table": "^6.0.3"

@@ -21,21 +21,18 @@ export function checker(contestCodeIn: number, problemIdIn: string) {
   return vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
-      title: `${problemLabel}: Checking Solution...`,
+      title: `${problemLabel} Checker`,
     },
     (progress, token): any => {
       console.log("Progress...");
       console.log(progress);
       console.log(token);
-      return check(progress, token);
+      return check(progress);
     }
   );
 }
 
-function check(
-  progress: vscode.Progress<any>,
-  token: vscode.CancellationToken
-) {
+function check(progress: vscode.Progress<any>) {
   return new Promise((resolve) => {
     if (!contestCode || !problemId) {
       vscode.window.showErrorMessage("Wrong Problem for checking");
@@ -136,9 +133,9 @@ async function getOutput() {
       const codeOutputFile = join(codeOutputFolder, `codeOutput${i}.txt`);
 
       const solFile = `.${sep}compiledSol`;
-      const inFile = join(".",basename(inputFolder),basename(inputFile));
+      const inFile = join(".", basename(inputFolder), basename(inputFile));
 
-      const cmd =`cd "${problemFolder}" && timeout 2s  "${solFile}" < "${inFile}"`;
+      const cmd = `cd "${problemFolder}" && timeout 2s  "${solFile}" < "${inFile}"`;
 
       const runCorrectly = await execShell(cmd)
         .then((stdout) => {
@@ -190,9 +187,9 @@ async function getOutput() {
           return false;
         });
 
-        if(!runCorrectly) {
-          return false;
-        }
+      if (!runCorrectly) {
+        return false;
+      }
 
       i++;
     }

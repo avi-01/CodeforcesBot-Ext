@@ -30,9 +30,9 @@ class FileHandler {
     const id = paths[size - 1].split("_")[0];
     const contestId = Number(paths[size - 3].split("_")[0]);
 
-    const isNumber = isNaN(contestId);
+    const isNotNumber = isNaN(contestId);
 
-    if(contestId && id && !isNaN(contestId)) {
+    if(contestId && id && !isNotNumber) {
       return {contestId:contestId, id: id};
     }
 

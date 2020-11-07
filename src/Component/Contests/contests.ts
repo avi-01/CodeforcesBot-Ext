@@ -4,6 +4,8 @@ import {Explorer} from '../../Container/explorer';
 import Problems from './Problems/problems';
 import { getUserHandle } from '../../helper/data/data';
 import { getContests } from './allContest';
+import Standing from "./Standings/standing";
+import Standings from './Standings/standings';
 
 export class ContestsProvider implements vscode.TreeDataProvider<Explorer> {
 
@@ -12,11 +14,6 @@ export class ContestsProvider implements vscode.TreeDataProvider<Explorer> {
   constructor(private workspaceRoot: string) {
     console.log(workspaceRoot);
     this.rootPath = workspaceRoot;
-
-    const file = vscode.workspace.findFiles("Codeforces/1437*/A/A.cpp").then((file) => {
-      console.log(file);
-    });
-
   }
 
   getTreeItem(element: Explorer): vscode.TreeItem {
@@ -54,6 +51,29 @@ export class ContestsProvider implements vscode.TreeDataProvider<Explorer> {
       });
     }
 
+    else if(element.label === 'Standings') {
+      const contestId = element.explorerId ? element.explorerId : 0;
+      let standingsExplorer: Explorer[] = [];
+
+      const userStanding = new Standing(getUserHandle(), contestId);
+      return userStanding.getStanding().then( () => {
+        standingsExplorer.push(userStanding.toExplorer());
+        standingsExplorer.push(new Explorer("Friends", "FriendsStanding", vscode.TreeItemCollapsibleState.Collapsed, contestId));
+  
+        return Promise.resolve(standingsExplorer);
+      });
+    }
+
+    else if(element.label === 'Friends') {
+      const contestId = element.explorerId ? element.explorerId : 0;
+      
+
+      const standings= new Standings(getUserHandle(), contestId);
+      return standings.getStandings().then(() => {
+        return standings.toExplorer();
+      })
+    }
+
     else {
       return Promise.resolve([]);
     }
@@ -74,7 +94,7 @@ export class ContestsProvider implements vscode.TreeDataProvider<Explorer> {
   getContestExplorer(contestId: number | undefined): Thenable<Explorer[]> {
     let contestExplorers = [];
 
-    contestExplorers.push(new Explorer("Standing", "Standing", vscode.TreeItemCollapsibleState.Collapsed, contestId));
+    contestExplorers.push(new Explorer("Standings", "Standings", vscode.TreeItemCollapsibleState.Collapsed, contestId));
     contestExplorers.push(new Explorer("Problems", "Problems", vscode.TreeItemCollapsibleState.Expanded, contestId));
 
     return Promise.resolve(

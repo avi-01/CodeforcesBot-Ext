@@ -5,9 +5,11 @@ let data = {
   password: "",
   lastUpdate: 1603880554122,
   cookie: null,
+  csrfToken: null,
   compileCommand: "g++-8 --std=c++14",
   templateFile: "",
-  templateLineNo: 0
+  templateLineNo: 0,
+  submitCompiler: 54
 };
 
 export function updateData(newData: any) {
@@ -34,6 +36,11 @@ export function resetCookie() {
     data.cookie = null;
 }
 
+export function getCsrfToken() {
+    return data.csrfToken;
+}
+
+
 export function setUser(userHandle: string | undefined, userPassword: string | undefined) {
 
     console.log('------', userHandle, userPassword);
@@ -54,7 +61,6 @@ export function setConfiguration(compileCommand: string, templateFile: string, t
 export function getCompileCommand() {
     return data.compileCommand;
 }
-
 
 export function setCompileCommand(compileCommand: string) {
     return data.compileCommand = compileCommand;
@@ -77,4 +83,8 @@ export function getTemplateLineNo() {
 
 export function setTemplateLineNo(templateLineNo: number) {
     return data.templateLineNo = templateLineNo;
+}
+
+export function getSubmitCompiler() {
+    return data.submitCompiler;
 }

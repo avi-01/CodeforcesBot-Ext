@@ -32,6 +32,7 @@ async function login() {
       })
       .then(() => {
         data.cookie = session.cookie;
+        data.csrfToken = session.csrfToken;
         data.lastUpdate = Date.now();
         console.log("Time: "+data.lastUpdate);
         updateData(data);
