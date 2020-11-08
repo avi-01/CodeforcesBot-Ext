@@ -82,9 +82,9 @@ function compileProgram() {
   const compileCommand = getCompileCommand();
   const solFile = basename(solPath);
 
-  const cmd = `cd "${problemFolder}" && ${compileCommand} -o compiledSol "${solFile}"`;
+  const cmd = `${compileCommand} -o compiledSol "${solFile}"`;
 
-  return execShell(cmd)
+  return execShell(cmd,problemFolder)
     .then((stdout) => {
       console.log("Compiled Successfully");
       return true;
@@ -135,9 +135,9 @@ async function getOutput() {
       const solFile = `.${sep}compiledSol`;
       const inFile = join(".", basename(inputFolder), basename(inputFile));
 
-      const cmd = `cd "${problemFolder}" && timeout 2s  "${solFile}" < "${inFile}"`;
+      const cmd = `timeout 2s  "${solFile}" < "${inFile}"`;
 
-      const runCorrectly = await execShell(cmd)
+      const runCorrectly = await execShell(cmd,problemFolder)
         .then((stdout) => {
           console.log(stdout);
 
@@ -252,9 +252,9 @@ function outputTestCases(testCases: any) {
   FileHandler.openFile(checkerOut);
 }
 
-function execShell(cmd: string) {
+function execShell(cmd: string, execDir?: any) {
   return new Promise<string>((resolve, reject) => {
-    cp.exec(cmd, (err, out) => {
+    cp.exec(cmd, {cwd: execDir},(err, out) => {
       if (err) {
         return reject(err);
       }

@@ -99,7 +99,6 @@ export function activate(context: vscode.ExtensionContext) {
     (node: Explorer) => {
       console.log("Explorer.....");
       console.log(node);
-      vscode.window.showInformationMessage("Creating contest folder...");
       if (node && node.explorerId) {
         createContestFolders(node.explorerId, node.label);
       }
@@ -146,7 +145,7 @@ export function activate(context: vscode.ExtensionContext) {
   const loginCommand = vscode.commands.registerCommand(
     "codeforcesbot-ext.login",
     async () => {
-      const userHandle = await vscode.window.showInputBox({
+      vscode.window.showInputBox({
         placeHolder: "Enter user",
         prompt: "Enter user name of Codeforces account",
         validateInput: (userHandle) => {
@@ -156,20 +155,21 @@ export function activate(context: vscode.ExtensionContext) {
             ? null
             : "User name can not be empty";
         },
-      });
-      const password = await vscode.window.showInputBox({
-        placeHolder: "Enter password",
-        prompt: "Enter password of Codeforces account",
-      });
-
-      console.log(userHandle, password);
-
-      context.globalState.update("userHandle", userHandle);
-      context.globalState.update("password", password);
-
-      setUser(userHandle, password);
-      resetCookie();
-      contestsProvider.refresh();
+      }).then(async (userHandle) =>{
+        const password = await vscode.window.showInputBox({
+          placeHolder: "Enter password",
+          prompt: "Enter password of Codeforces account",
+        });
+  
+        console.log(userHandle, password);
+  
+        context.globalState.update("userHandle", userHandle);
+        context.globalState.update("password", password);
+  
+        setUser(userHandle, password);
+        resetCookie();
+        contestsProvider.refresh();
+      }); 
     }
   );
 

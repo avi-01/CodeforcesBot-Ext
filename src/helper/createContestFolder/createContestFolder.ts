@@ -1,4 +1,4 @@
-import { Selection, TextEditor, Uri, window, workspace } from "vscode";
+import { Selection, TextEditor, window, workspace,ProgressLocation } from "vscode";
 import {
   getTemplateFile,
   getTemplateLineNo,
@@ -36,19 +36,40 @@ export function createContestFolders(
     return;
   }
 
-  dir = join(rootPath.uri.fsPath ,"Codeforces", name);
+  window.withProgress(
+    {
+      location: ProgressLocation.Notification,
+      title: `${contestId} Folder`,
+    },
+    async (progress, token): Promise<any> => {
+      dir = join(rootPath.uri.fsPath, "Codeforces", name);
 
-  console.log("Dir: " + dir);
+      console.log("Dir: " + dir);
 
-  contestCode = contestId;
-  pdfTrue = pdf;
-  createReqFiles();
-  getQuestions();
+      contestCode = contestId;
+      pdfTrue = pdf;
+
+      progress.report({ increment: 20, message: "Fetching folder..." });
+
+      createReqFiles();
+
+      progress.report({ increment: 20, message: "Fetching problems..." });
+
+      const problemsId = await getQuestions();
+
+      progress.report({ increment: 60, message: "Opening Sol files..." });
+
+      await openProblemsFiles(problemsId);
+
+      return;
+    }
+  );
+  
 }
 
-async function createReqFiles() {
+function createReqFiles() {
   // await FileHandler.createDir(join(__dirname, "..", "Codeforces"));
-  await FileHandler.createDir(dir);
+  FileHandler.createDir(dir);
 }
 
 async function getQuestions() {
@@ -70,7 +91,7 @@ async function getQuestions() {
 
   await Promise.all(getTestCasesPromises);
 
-  openProblemsFiles(problemsId);
+  return problemsId;
 }
 
 function getProblemsID() {
@@ -122,10 +143,7 @@ async function storeTestCases(problem: any, testCases: any) {
   FileHandler.createDir(join(problemDir, "codeOutput"));
 
   if (!FileHandler.checkExist(join(problemDir, problemLabel + ".cpp"))) {
-    FileHandler.copyFile(
-      templateFile,
-      join(problemDir, problemLabel + ".cpp")
-    );
+    FileHandler.copyFile(templateFile, join(problemDir, problemLabel + ".cpp"));
   }
 
   testCases.forEach((testCase: any, i: number) => {
@@ -152,15 +170,16 @@ function openProblemSolFile(id: any, name: any) {
   const problemSolFile = join(dir, `${id}_${name}`, `${id}_${name}.cpp`);
   const row = getTemplateLineNo() ? getTemplateLineNo() : 0;
 
-  return FileHandler.openFile(problemSolFile, {preview: false})
-    .then((editor: TextEditor) => {
+  return FileHandler.openFile(problemSolFile, { preview: false }).then(
+    (editor: TextEditor) => {
       const lineCount = editor.document.lineCount;
       const cursorAtLine = lineCount >= row ? row - 1 : lineCount - 1;
       const range = editor.document.lineAt(cursorAtLine).range;
       editor.selection = new Selection(range.end, range.end);
       editor.revealRange(range);
       return;
-    });
+    }
+  );
 }
 
 function getProblemStatement(problemsId: any) {

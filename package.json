@@ -10,13 +10,10 @@
 	"keywords":["Codeforces","Programming","Competitive","CP","Contest","Bot"],
 	"publisher": "avi01",
 	"repository": "git@github.com:avi-01/CodeforcesBot-Ext.git",
-	"version": "1.0.1",
+	"version": "1.0.4",
 	"engines": {
 		"vscode": "^1.40.0"
 	},
-	"categories": [
-		"Other"
-	],
 	"activationEvents": [
 		"*"
 	],
@@ -173,7 +170,7 @@
 			"properties": {
 				"codeforcesBot.compile.command": {
 					"type": "string",
-					"default": "g++-8 --std=c++14",
+					"default": "g++",
 					"description": "The command to compile the solution file",
 					"scope": "window"
 				},
@@ -184,7 +181,7 @@
 				},
 				"codeforcesBot.template.templateLineNumber": {
 					"type": "number",
-					"default": 174,
+					"default": 162,
 					"description": "The line number of template from where you want to start coding",
 					"scope": "window"
 				}

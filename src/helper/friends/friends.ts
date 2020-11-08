@@ -21,8 +21,6 @@ export default async function getFriends(): Promise<string[]> {
 
     const userFriends: string[] = [];
 
-    FileHandler.createFile("/mnt/9A84BA6F84BA4E0F/Projects/CodeforcesBot/codeforcesbot-ext/src/helper/submit/output.html",data);
-
     const $ = cheerio.load(data);
 
     const rows = $(".datatable a");
