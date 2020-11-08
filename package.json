@@ -10,7 +10,7 @@
 	"keywords":["Codeforces","Programming","Competitive","CP","Contest","Bot"],
 	"publisher": "avi01",
 	"repository": "avi-01/CodeforcesBot-Ext.git",
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"engines": {
 		"vscode": "^1.40.0"
 	},

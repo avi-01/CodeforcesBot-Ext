@@ -22,7 +22,7 @@ Simple UI which allow you to see all the contests, run your solution on sample t
 1. Open command palette (Ctrl+Shift+P)
 2. Write `login` and select the login option.
 3. It will ask for the username and password of your codeforces account.
-4. Done.
+5. You need to set the compiler and template file in [Extension Setting](#Extension-Settings)
 
 
 
@@ -61,7 +61,7 @@ Simple UI which allow you to see all the contests, run your solution on sample t
 
 ### 1. Compile Command
 * You can choose the compiler of c++ which should be used to compile you solution.<br>
-And additional arguments can also be passed. For example std of c++.
+And additional arguments can also be passed. For example std of c++ (`g++ --std=c++14`).
 
 ### 2. Template File
 * Default template is provided. If you want to use your own template to be used for solution, you should set the template file path to the setting.
