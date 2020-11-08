@@ -1,7 +1,7 @@
 {
-	"name": "Codeforces Bot",
+	"name": "CodeforcesBot",
 	"displayName": "Codeforces Bot",
-	"icon":"https://i.ibb.co/x3CjSMh/circle-cropped.png",
+	"icon":"res/img/CodeforcesBot.png",
 	"description": "Fetch, test and submit problems.",
 	"author": {
 		"name": "Avinish Kumar"
