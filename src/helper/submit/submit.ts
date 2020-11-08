@@ -133,11 +133,6 @@ async function submit() {
 
   return axios(options)
     .then((res: AxiosResponse) => {
-      FileHandler.createFile(
-        "/mnt/9A84BA6F84BA4E0F/Projects/CodeforcesBot/codeforcesbot-ext/src/helper/submit/output.html",
-        res.data
-      );
-
       const $ = cheerio.load(res.data);
 
       const sameSourceDiv = $(".error.for__source");

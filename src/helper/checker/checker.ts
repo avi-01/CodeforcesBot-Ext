@@ -135,7 +135,12 @@ async function getOutput() {
       const solFile = `.${sep}compiledSol`;
       const inFile = join(".", basename(inputFolder), basename(inputFile));
 
-      const cmd = `timeout 2s  "${solFile}" < "${inFile}"`;
+      const cmd = await execShell("timeout 2s echo Working").then((stdout)=>{
+        console.log(stdout);
+        return `timeout 2s  "${solFile}" < "${inFile}"`;
+      }).catch((error) => {
+        return `"${solFile}" < "${inFile}"`;
+      });
 
       const runCorrectly = await execShell(cmd,problemFolder)
         .then((stdout) => {
