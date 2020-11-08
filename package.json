@@ -1,5 +1,5 @@
 {
-	"name": "CodeforcesBot",
+	"name": "codeforcesbot-ext",
 	"displayName": "Codeforces Bot",
 	"icon":"res/img/CodeforcesBot.png",
 	"description": "Fetch, test and submit problems.",
