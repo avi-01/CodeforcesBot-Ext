@@ -35,11 +35,11 @@ Simple UI which allow you to see all the contests, run your solution on sample t
 
 
 ### 2. Refresh
-* Refresh button allow you to reload to the contests and rating.
+* Refresh button allow you to reload to the contests and ratings.
 
 
 ### 3. Create contest directory
-* It create a directory of contest which will have the sample testcases and cpp solution with template code.
+* It create a directory of contest which will have the sample testcases and cpp solution file with the template code.
 
 ### 4. Run Solution
 * This button allows you to run your solution on the sample testcases.

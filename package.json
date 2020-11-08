@@ -1,10 +1,16 @@
 {
-	"name": "codeforcesbot-ext",
+	"name": "Codeforces Bot",
 	"displayName": "Codeforces Bot",
-	"description": "Codeforces automation. Fetch, test and submit problems.",
+	"icon":"https://i.ibb.co/x3CjSMh/circle-cropped.png",
+	"description": "Fetch, test and submit problems.",
+	"author": {
+		"name": "Avinish Kumar"
+	},	
+	"categories": ["Other"],
+	"keywords":["Codeforces","Programming","Competitive","CP","Contest","Bot"],
 	"publisher": "avi01",
 	"repository": "git@github.com:avi-01/CodeforcesBot-Ext.git",
-	"version": "0.0.10",
+	"version": "1.0.1",
 	"engines": {
 		"vscode": "^1.40.0"
 	},
