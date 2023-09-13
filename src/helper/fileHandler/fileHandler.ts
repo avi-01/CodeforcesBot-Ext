@@ -69,7 +69,7 @@ class FileHandler {
   }
 
   static copyFile(fromCopy: string, toCopy:string) {
-    fs.copyFileSync(fromCopy, toCopy, (err:any) => this.handleError(err));
+    fs.copyFileSync(fromCopy, toCopy);
   }
 
   static checkExist(path: string): boolean {
